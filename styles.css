@@ -1,0 +1,55 @@
+html    {
+    background: url("https://i.pinimg.com/originals/12/d1/61/12d16121b4cbfd5cec4cd1c9c41fbcb2.jpg") no-repeat center center fixed;
+    -webkit-background-size: cover; 
+    -moz-background-size: cover; 
+    -o-backgrond-size: cover; 
+    background-size: cover;  
+}
+
+
+
+#container  {
+    height: 0px; 
+    color: white; 
+    margin: 0 auto; 
+    width: 19%; 
+    position: relative; 
+    top: 200px; 
+}
+
+h1  {
+    margin: 0 auto; 
+    width: 70%; 
+}
+
+#signUp_text    {
+    margin: 0 auto; 
+    width: 50%; 
+}
+
+input   {
+    display: block;
+}
+
+
+#email  {
+    width: 350px;
+}
+
+#password   {
+    width: 350px; 
+}
+
+#signUp_button  {
+    margin: 0 auto; 
+   
+}
+#stayLoggedIn   {
+    float: left; 
+    margin-top: 5px; 
+}
+
+#checkbox_container {
+    margin: 0 auto; 
+    width: 35%; 
+}
