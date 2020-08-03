@@ -24,14 +24,14 @@ h1  {
 
 #signUp_text    {
     margin: 0 auto; 
-    width: 50%; 
+    width: 90%; 
 }
 
 input   {
     display: block;
 }
 
-
+/** Sign Up **/
 #email  {
     width: 350px;
 }
@@ -39,11 +39,19 @@ input   {
 #password   {
     width: 350px; 
 }
+/** Sign Up **/
 
 #signUp_button  {
     margin: 0 auto; 
-   
+    
 }
+
+#login_button   {
+    margin: 0 auto; 
+    display: none; 
+    visibility: hidden; 
+}
+
 #stayLoggedIn   {
     float: left; 
     margin-top: 5px; 
@@ -53,3 +61,27 @@ input   {
     margin: 0 auto; 
     width: 35%; 
 }
+
+/** Login **/
+#login_email    {
+    display: none;
+    visibility: hidden; 
+    width: 350px;  
+}
+
+#login_password {
+    display: none;
+    visibility: hidden;
+    width: 350px; 
+}
+/** Login **/
+
+
+#switch_modes   {
+    margin: 0 auto; 
+    width: 18%;
+    top: 20px; 
+    position: relative; 
+    color: red; 
+}
+
