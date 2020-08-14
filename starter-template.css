@@ -1,7 +1,18 @@
 body {
   padding-top: 5rem;
 }
+
 .starter-template {
   padding: 3rem 1.5rem;
   text-align: center;
+}
+
+#logout_button  {
+  position: absolute; 
+  right: 0;  
+}
+
+#user_text  {
+ position: absolute; 
+  left: 0; 
 }

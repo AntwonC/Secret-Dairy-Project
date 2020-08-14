@@ -1,3 +1,136 @@
+<?php 
+    session_start(); 
+    ob_start(); 
+    
+    if ( isset($_COOKIE['id']) || !isset($_SESSION['id']) || empty($_SESSION['id']) )  {
+      header("Location: loggedinpage.php");
+    }
+    // PROBLEM: It still thinks we are logged in when we go back originally. This is because of the unsetting of the cookie. 
+    if ( array_key_exists("submit", $_POST) || array_key_exists("login_submit", $_POST) ) {
+      
+      $link =  mysqli_connect("shareddb-p.hosting.stackcp.net", "userss-313135851f", "ux073rj2s3", "userss-313135851f");
+      
+      if ( mysqli_connect_error() ) {
+        die ("There was an error connecting to the database");
+      } 
+      
+      
+
+
+
+    // START: Sign up verfiication 
+      $errors = ""; 
+      $success = "";
+      $email_signUp = $_POST['signUp_email']; 
+      $password_signUp = md5( md5 ( $_POST['signUp_password'] ) . $_POST['signUp_password'] ); 
+
+
+      if ( $_POST['submit'] == "Sign Up" )  {
+
+          if ( $_POST['signUp_email'] == "" ) {
+              $errors .= "Email is required" . "<br>"; 
+          }
+
+          if ( $_POST['signUp_password'] == "" )  {
+            $errors .= "Password is required" . "<br>";
+          }
+
+          // If no errors, continue with validation. 
+          if ( $errors == "" )  {
+            // Checking if the email already exists. 
+            $signUp_query = "SELECT id FROM `users` WHERE email = '".mysqli_real_escape_string($link, $email_signUp)."' LIMIT 1";   
+            $signUp_result = mysqli_query($link, $signUp_query);
+            $rows = mysqli_num_rows($signUp_result); 
+
+            if ( mysqli_num_rows($signUp_result) > 0 )  {
+
+              $errors = "That email address is already taken";
+
+            } else  {
+
+              $add_query = "INSERT INTO `users` (`email`, `password`) VALUES ('".mysqli_real_escape_string($link, $email_signUp)."', '".mysqli_real_escape_string($link, $password_signUp)."')";
+             // echo "This is possible" . "<br>";
+
+             if ( !mysqli_query($link, $add_query) ) {
+                $errors = "Could not sign up you up. Try again later." . "<br>";
+             }
+            // Set session 
+           // session_start(); 
+             $_SESSION['id'] = mysqli_insert_id($link);
+
+             // If user wants to stay logged in, create cookie. 
+             if ( $_POST['stayLoggedIn'] == '1' )  {
+              setcookie("id", mysqli_insert_id($link), time() + 60 * 60 * 24 * 365);
+             }
+             
+             $success .= "You are signed up!" . "<br>";
+
+            }
+          } 
+          
+        // END: Sign up verification 
+      } else if ( $_POST['login_submit'] == "Login")  {
+        // START: Login verification 
+          $email_login = $_POST['login_email']; 
+          $email_password = md5 ( md5 ( $_POST['login_password'] ) . $_POST['login_password'] );
+
+          if ( $_POST['login_email'] ==  "" ) {
+            $errors .= "Email is required." . "<br>"; 
+          }
+
+          if ( $_POST['login_password'] == "" ) {
+            $errors .= "Password is required." . "<br>";
+          }
+
+          // Validating login email here to see if its in the database
+          if ( $errors == "" )  {
+            $login_query = "SELECT id FROM `users` WHERE email = '".mysqli_real_escape_string($link, $email_login)."' LIMIT 1";   
+            $login_result = mysqli_query($link, $login_query);
+            $login_rows = mysqli_num_rows($login_result); 
+
+            if ( mysqli_num_rows($login_result) > 0 ) {
+              // Email already exists in the database which means its valid 
+              $database_pass = "SELECT password FROM `users` WHERE email = '".mysqli_real_escape_string($link, $email_login)."' LIMIT 1";
+              $db_result = mysqli_query($link, $database_pass); 
+              $db_row = mysqli_fetch_array($db_result); 
+
+             // echo $db_row['password'] . "<br>";
+
+            //echo "Email exists" . "<br>";
+               if ( $email_password == $db_row['password'] )  {
+                 echo "The passwords match." . "<br>";
+
+              //   session_start(); 
+                 $_SESSION['id'] = $db_row['id']; 
+
+                  // If user wants to stay logged in, create cookie. 
+                    if ( $_POST['stayLoggedIn'] == '1' )  {
+                      setcookie("id", $db_row['id'], time() + 60 * 60 * 24 * 365);
+                    }
+
+                      header("Location: loggedinpage.php");
+
+                  }  else  {
+                      $errors .= "The password is incorrect." . "<br>";
+                  }
+            } else  {
+              $errors .= "Email is not in the database." . "<br>";
+            }
+
+
+          } 
+      //  echo "Login attempted" . "<br>";
+      }
+
+
+}
+
+//print_r($_POST);
+
+
+?>
+
+
 <!doctype html>
 <html lang="en">
   <head>
@@ -17,6 +150,15 @@
 
       <p id = "both_modes"> Store your thoughts permenantly and securely. </p> 
 
+      <div id = "error"> <?php
+                            // echo $errors; 
+                             if ( $errors != "" ) {
+                               echo $errors; 
+                             }  else  {
+                               echo $success; 
+                             }
+                             ?> </div>
+
     <div> 
       <p id = "signUp_text">      Interested? Sign up now. </p>  <br>
 
@@ -28,7 +170,7 @@
           <input type = "text" name = "login_email" placeholder = "Email" id = "login_email"> <br>
 
           <input type = "password" name = "signUp_password" placeholder = "Password" id = "password">
-          <input type = "password" nmame = "login_password" placeholder = "Password" id = "login_password"> 
+          <input type = "password" name = "login_password" placeholder = "Password" id = "login_password"> 
            <br>
           
 
