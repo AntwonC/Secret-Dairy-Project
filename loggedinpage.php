@@ -1,20 +1,29 @@
 <?php
     session_start(); 
     ob_start(); 
-
+  // ( 8-15-20 ) TODO: Work on implementing the main feature and after that we are done! 
     /**if ( array_key_exists("id", $_COOKIE) ) {
         $_SESSION['id'] = $_COOKIE['id'];
     } */
+    print_r($_COOKIE);
+    echo "<br>";
+    print_r($_SESSION);
+    echo "<br>"; 
+   // echo "hello " . $_SESSION['id'] . "<br>"; 
+   // echo "hello " . $_COOKIE['id'] . "<br>";
 
-    if ( !isset($_SESSION['id']) || empty($_SESSION['id']) )  {
-       // header("Location: loggedinpage.php");
+    if ( !isset($_SESSION['id']) || !isset($_COOKIE['id']) )  {
+        header("Location: index.php");
      //   exit(); 
     }
 
     $id = $_SESSION['id'];
 
     if ( $_POST['logout_button'] == '1' )   {
-        setcookie("id", "",  time() - 3600); // Unsetting the cookie 
+        unset($_SESSION['id']);
+       // unset($_SESSION['id']);
+        unset($_COOKIE['id']); // Unsets the cookie?
+       setcookie("id", "",  time() - 3600); // Unsetting the cookie 
         header("Location: index.php");
     }
     print_r($_POST); 

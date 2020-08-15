@@ -2,9 +2,32 @@
     session_start(); 
     ob_start(); 
     
-    if ( isset($_COOKIE['id']) || !isset($_SESSION['id']) || empty($_SESSION['id']) )  {
-      header("Location: loggedinpage.php");
+    // ( 8-14-20 ) Next time you work on this tomorrow, need to logout user and not go back to the loggedinpage. Destroy session variable and cookie.
+    // ( 8-15-20 ) RESOLVED: Currently think am able to log user out properly without any issues and redirects to the correct page
+    // $cookie_set = false; 
+   print_r($_SESSION);
+    if ( isset($_COOKIE['id']) && isset($_SESSION['id']) ) {
+      //echo "The cookie is set." . "<br>"; 
+      //unset($_COOKIE['id']); 
+      //print_r($_COOKIE);
+     // echo "<br>";
+     header("Location: loggedinpage.php");
+    } else  {
+    //  header("Location: index.php");
+    //  echo "The cookie is not set." . "<br>";
     }
+    /*if ( $cookie_set )  {
+
+      if ( empty($_COOKIE['id']) || !isset($_SESSION['id']) || empty($_SESSION['id']) )  {
+        header("Location: loggedinpage.php");
+        
+      } else  {
+         header("Location: index.php");
+      }
+
+    } else  {
+        echo $cookie_set . "<br>";
+    } */
     // PROBLEM: It still thinks we are logged in when we go back originally. This is because of the unsetting of the cookie. 
     if ( array_key_exists("submit", $_POST) || array_key_exists("login_submit", $_POST) ) {
       
@@ -88,24 +111,35 @@
             $login_result = mysqli_query($link, $login_query);
             $login_rows = mysqli_num_rows($login_result); 
 
+            echo $login_rows . "<br>";
+
             if ( mysqli_num_rows($login_result) > 0 ) {
               // Email already exists in the database which means its valid 
               $database_pass = "SELECT password FROM `users` WHERE email = '".mysqli_real_escape_string($link, $email_login)."' LIMIT 1";
               $db_result = mysqli_query($link, $database_pass); 
               $db_row = mysqli_fetch_array($db_result); 
-
+                
              // echo $db_row['password'] . "<br>";
 
             //echo "Email exists" . "<br>";
                if ( $email_password == $db_row['password'] )  {
                  echo "The passwords match." . "<br>";
+           $get_id = "SELECT id FROM `users` WHERE email = '".mysqli_real_escape_string($link, $email_login)."' LIMIT 1";   
+           $get_id_result = mysqli_query($link, $get_id); 
+           $get_id_row = mysqli_fetch_array($get_id_result);
+           print_r($get_id_row); 
+           echo "<br>";
+               //  echo "The id for db_row is " . $login_result['id'] . "<br>";
 
               //   session_start(); 
-                 $_SESSION['id'] = $db_row['id']; 
+                 $_SESSION['id'] = $get_id_row['id'];
+                 //print_r($_SESSION);
+                 //echo "<br>"; 
 
                   // If user wants to stay logged in, create cookie. 
                     if ( $_POST['stayLoggedIn'] == '1' )  {
-                      setcookie("id", $db_row['id'], time() + 60 * 60 * 24 * 365);
+                      setcookie("id", $get_id_row['id'], time() + 60 * 60 * 24 * 365);
+                      $cookie_set = true; 
                     }
 
                       header("Location: loggedinpage.php");
