@@ -5,7 +5,7 @@
     // ( 8-14-20 ) Next time you work on this tomorrow, need to logout user and not go back to the loggedinpage. Destroy session variable and cookie.
     // ( 8-15-20 ) RESOLVED: Currently think am able to log user out properly without any issues and redirects to the correct page
     // $cookie_set = false; 
-   print_r($_SESSION);
+  // print_r($_SESSION);
     if ( isset($_COOKIE['id']) && isset($_SESSION['id']) ) {
       //echo "The cookie is set." . "<br>"; 
       //unset($_COOKIE['id']); 
@@ -84,7 +84,11 @@
              // If user wants to stay logged in, create cookie. 
              if ( $_POST['stayLoggedIn'] == '1' )  {
               setcookie("id", mysqli_insert_id($link), time() + 60 * 60 * 24 * 365);
+              //$_SESSION['third_check']
              }
+
+             // BUG: When logging in, if stayLoggedIn is not a cookie, then page goes back to login. 
+             // FIX: Create a cookie no matter what and then just check for it as well. 
              
              $success .= "You are signed up!" . "<br>";
 
@@ -187,9 +191,10 @@
       <div id = "error"> <?php
                             // echo $errors; 
                              if ( $errors != "" ) {
-                               echo $errors; 
-                             }  else  {
-                               echo $success; 
+                               echo '<div class = "alert alert-danger" role = "alert">' .  $errors . '</div>'; 
+                             }  else if ( $success != "" )  {
+                               echo '<div class = "alert alert-success" role= "alert">' . $success . '</div>'; 
+                              // echo $success;
                              }
                              ?> </div>
 
@@ -245,7 +250,7 @@
           function myFunction() {
 
             if ( mode == 0 )  {
-              document.getElementById("switch_modes").innerHTML = "     Login"; 
+              document.getElementById("switch_modes").innerHTML = "Sign Up"; 
               document.getElementById("signUp_text").innerHTML = "  Log in using your email and password.";
               
               // START: Make the login email and password visible 
@@ -273,7 +278,7 @@
 
               mode = 1;
             } else  {
-              document.getElementById("switch_modes").innerHTML = "Sign Up"; 
+              document.getElementById("switch_modes").innerHTML = "     Login"; 
               document.getElementById("signUp_text").innerHTML = "Interested? Sign up now.";
 
               // START: Make the login email and password visible 
